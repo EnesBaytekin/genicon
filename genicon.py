@@ -19,6 +19,7 @@ class Properties:
         self.icon_height: int = 5
         self.output_path: str = ""
         self.input_text: str = ""
+        self.mirror = True
 
 def error(msg: str, code: int = 1):
     print(msg, file=stderr)
@@ -53,11 +54,16 @@ def generate_icon(text: str) -> IMAGE:
     color: tuple[int, int, int, int] = get_color()
 
     image: IMAGE = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-    for x in range(ceil(width/2)):
+    
+    for_width = width
+    if properties.mirror:
+        for_width = ceil(width/2)
+    for x in range(for_width):
         for y in range(height):
             if getrandbits(1):
                 image.putpixel((x, y), color)
-                image.putpixel((width-1-x, y), color)
+                if properties.mirror:
+                    image.putpixel((width-1-x, y), color)
 
     return image
 
@@ -85,6 +91,7 @@ def process_args(arguments: list[str]) -> None:
     process_output_path(arguments)
     process_width(arguments)
     process_height(arguments)
+    process_no_mirror(arguments)
     process_input_text(arguments)
 
 def process_help(arguments: list[str]) -> None:
@@ -143,6 +150,12 @@ def process_height(arguments: list[str]) -> None:
         error("Give a positive integer as a height value after '-h'")
     
     Properties().icon_height = int(height)
+
+def process_no_mirror(arguments: list[str]) -> None:
+    for flag in ["-m", "--no-mirror"]:
+        if flag in arguments:
+            arguments.remove(flag)
+            Properties().mirror = False
 
 def process_input_text(arguments: list[str]) -> None:
     text: str = " ".join(arguments)
