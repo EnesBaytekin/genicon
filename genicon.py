@@ -108,6 +108,7 @@ Options:
     -h <height>     Set height of the icon.
                         default: 5
 """, end="")
+        exit(0)
 
 def process_output_path(arguments: list[str]) -> None:
     if "-o" not in arguments: return
