@@ -100,13 +100,14 @@ def process_help(arguments: list[str]) -> None:
 Usage: genicon [options] <text>
 
 Options:
-    -o <path>       Specify the output file name.
-                    ('.png' will be added to the end if it is not included)
-                        default: <input_text>.png
-    -w <width>      Set width of the icon.
-                        default: 5
-    -h <height>     Set height of the icon.
-                        default: 5
+    -o <path>           Specify the output file name.
+                        ('.png' will be added to the end if it is not included)
+                            default: <input_text>.png
+    -w <width>          Set width of the icon.
+                            default: 5
+    -h <height>         Set height of the icon.
+                            default: 5
+    -m, --no-mirror     Generate icon without mirroring.
 """, end="")
         exit(0)
 
