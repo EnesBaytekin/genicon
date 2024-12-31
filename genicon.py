@@ -2,10 +2,8 @@
 
 from PIL.Image import Image as IMAGE
 from PIL import Image
-from hashlib import sha256
-from random import seed, getrandbits
-from math import ceil
 from sys import argv, stderr
+from generation import generate_image
 
 class Properties:
     instance = None
@@ -24,48 +22,6 @@ class Properties:
 def error(msg: str, code: int = 1):
     print(msg, file=stderr)
     exit(code)
-
-def get_hashed(text: str) -> str:
-    return sha256(text.encode()).hexdigest()
-
-def get_color() -> tuple[int, int, int, int]:
-    while True:
-        red  : bool = getrandbits(1) == 1
-        green: bool = getrandbits(1) == 1
-        blue : bool = getrandbits(1) == 1
-        if not (red == green == blue == 0):
-            break
-
-    return (
-        192 if red   else 64,
-        192 if green else 64,
-        192 if blue  else 64,
-        255
-    )
-
-def generate_icon(text: str) -> IMAGE:
-    properties = Properties()
-    width: int = properties.icon_width
-    height: int = properties.icon_height
-
-    code: str = get_hashed(text)
-    seed(int(code, 16)+width+height*65536)
-
-    color: tuple[int, int, int, int] = get_color()
-
-    image: IMAGE = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-    
-    for_width = width
-    if properties.mirror:
-        for_width = ceil(width/2)
-    for x in range(for_width):
-        for y in range(height):
-            if getrandbits(1):
-                image.putpixel((x, y), color)
-                if properties.mirror:
-                    image.putpixel((width-1-x, y), color)
-
-    return image
 
 def save_icon(icon: IMAGE) -> None:
     properties = Properties()
@@ -165,8 +121,13 @@ def process_input_text(arguments: list[str]) -> None:
 
 def main() -> None:
     process_args(argv)
-    text: str = Properties().input_text
-    icon: IMAGE = generate_icon(text)
+    properties = Properties()
+    icon: IMAGE = generate_image(
+        properties.input_text,
+        properties.icon_width,
+        properties.icon_height,
+        properties.mirror,
+    )
     save_icon(icon)
 
 if __name__ == "__main__":
