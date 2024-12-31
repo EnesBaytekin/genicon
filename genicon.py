@@ -43,12 +43,12 @@ def get_color() -> tuple[int, int, int, int]:
     )
 
 def generate_icon(text: str) -> IMAGE:
-    code: str = get_hashed(text)
-    seed(int(code, 16))
-    
     properties = Properties()
     width: int = properties.icon_width
     height: int = properties.icon_height
+
+    code: str = get_hashed(text)
+    seed(int(code, 16)+width+height*65536)
 
     color: tuple[int, int, int, int] = get_color()
 
