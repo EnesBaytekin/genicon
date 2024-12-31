@@ -81,10 +81,26 @@ def get_output_path() -> None:
 
 def process_args(arguments: list[str]) -> None:
     arguments.pop(0) # pop main file name
+    process_help(arguments)
     process_output_path(arguments)
     process_width(arguments)
     process_height(arguments)
     process_input_text(arguments)
+
+def process_help(arguments: list[str]) -> None:
+    if len(arguments) == 0:
+        print("""\
+Usage: genicon [options] <text>
+
+Options:
+    -o <path>       Specify the output file name.
+                    ('.png' will be added to the end if it does not include)
+                        default: <input_text>.png
+    -w <width>      Set width of the icon.
+                        default: 5
+    -h <height>     Set height of the icon.
+                        default: 5
+""", end="")
 
 def process_output_path(arguments: list[str]) -> None:
     if "-o" not in arguments: return
@@ -99,7 +115,6 @@ def process_output_path(arguments: list[str]) -> None:
     if not path.endswith(".png"):
         path += ".png"
     Properties().output_path = path
-    
 
 def process_width(arguments: list[str]) -> None:
     if "-w" not in arguments: return
@@ -130,9 +145,6 @@ def process_height(arguments: list[str]) -> None:
     Properties().icon_height = int(height)
 
 def process_input_text(arguments: list[str]) -> None:
-    if len(arguments) == 0:
-        error("Provide a text to generate an icon.")
-    
     text: str = " ".join(arguments)
     Properties().input_text = text
 
